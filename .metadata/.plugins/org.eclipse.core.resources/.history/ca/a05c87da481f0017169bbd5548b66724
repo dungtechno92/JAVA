@@ -1,0 +1,33 @@
+package com.dungdv;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+public class ArrayList {
+	private static final int DEFAULT_CAPACITY = 10;
+	private static final Object[] EMPTY_ELEMENTDATA = {};
+	private transient Object[] elementData;
+	public ArrayList() {
+		
+	}
+	
+	
+	Object get(int index){
+		return elementData[index];
+	}
+	
+	Object add(Object o){
+		return o;
+	}
+	
+	Object set(int index, Object o){
+		return o;
+	}
+	
+	void remove(int index){
+		
+	}
+	
+	
+}

@@ -1,0 +1,21 @@
+package com.dungdv;
+
+public class ArrayList {
+	Object get(int index){
+		return index;
+	}
+	
+	Object add(Object o){
+		return o;
+	}
+	
+	Object set(int index, Object o){
+		return o;
+	}
+	
+	void remove(int index){
+		
+	}
+	
+	
+}

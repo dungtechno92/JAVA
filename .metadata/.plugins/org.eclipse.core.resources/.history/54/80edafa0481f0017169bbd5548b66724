@@ -1,0 +1,32 @@
+package com.dungdv;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+public class ArrayList {
+	private int DEFAULT_CAPACITY = 10;
+	public ArrayList() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	Object get(int index){
+		List<Integer> xxx= new java.util.ArrayList<>();
+		return index;
+	}
+	
+	Object add(Object o){
+		return o;
+	}
+	
+	Object set(int index, Object o){
+		return o;
+	}
+	
+	void remove(int index){
+		
+	}
+	
+	
+}
