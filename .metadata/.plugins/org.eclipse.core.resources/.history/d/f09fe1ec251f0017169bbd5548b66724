@@ -1,7 +1,0 @@
-package com.dungdv;
-
-public class ArrayList {
-	Object get(int index){
-		return index;
-	}
-}
