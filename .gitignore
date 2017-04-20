@@ -1,6 +1,8 @@
 .metadata
 RemoteSystemsTempFiles/
 .git
+Collections/.idea/
+Collections/Collections.iml
 Collections/.classpath
 Collections/.gitignore
 Collections/.project
