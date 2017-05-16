@@ -1,7 +1,5 @@
 package com.dungdv;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 
 /**
@@ -123,106 +121,95 @@ public class TreeMap<K, V> {
         return null;
     }
 
-    public V put(K var1, V var2) {
-        Entry var3 = this.root;
-        if(var3 == null) {
-            this.compare(var1, var1);
-            this.root = new Entry(var1, var2, (Entry)null);
+    public V put(K newKey, V newValue) {
+        Entry entryRoot = this.root;
+        // if tree is empty
+        if(entryRoot == null) {
+            this.compare(newKey, newKey);
+            this.root = new Entry(newKey, newValue, (Entry)null);
             this.size = 1;
             ++this.modCount;
             return null;
         } else {
-            Comparator var6 = this.comparator;
-            int var4;
-            Entry var5;
-            if(var6 != null) {
-                do {
-                    var5 = var3;
-                    var4 = var6.compare(var1, var3.key);
-                    if(var4 < 0) {
-                        var3 = var3.left;
-                    } else {
-                        if(var4 <= 0) {
-                            return (V) var3.setValue(var2);
-                        }
+            Comparator comparator = this.comparator;
+            int compareResult;
+            Entry parentEntry;
+            if(newKey == null) {
+                throw new NullPointerException();
+            }
 
-                        var3 = var3.right;
+            Comparable var7 = (Comparable)newKey;
+
+            // find parent for new entry
+            do {
+                parentEntry = entryRoot;
+                compareResult = var7.compareTo(entryRoot.key);
+                if(compareResult < 0) {
+                    entryRoot = entryRoot.left;
+                } else {
+                    // If key exiting in tree
+                    if(compareResult == 0) {
+                        return (V) entryRoot.setValue(newValue);
                     }
-                } while(var3 != null);
-            } else {
-                if(var1 == null) {
-                    throw new NullPointerException();
+
+                    entryRoot = entryRoot.right;
                 }
+            } while(entryRoot != null);
 
-                Comparable var7 = (Comparable)var1;
-
-                do {
-                    var5 = var3;
-                    var4 = var7.compareTo(var3.key);
-                    if(var4 < 0) {
-                        var3 = var3.left;
-                    } else {
-                        if(var4 <= 0) {
-                            return (V) var3.setValue(var2);
-                        }
-
-                        var3 = var3.right;
-                    }
-                } while(var3 != null);
-            }
-
-            Entry var8 = new Entry(var1, var2, var5);
-            if(var4 < 0) {
-                var5.left = var8;
+            // New entry to insert into Tree
+            Entry newEntry = new Entry(newKey, newValue, parentEntry);
+            if(compareResult < 0) {
+                parentEntry.left = newEntry;
             } else {
-                var5.right = var8;
+                parentEntry.right = newEntry;
             }
 
-            this.fixAfterInsertion(var8);
+            this.fixAfterInsertion(newEntry);
             ++this.size;
             ++this.modCount;
             return null;
         }
     }
 
-    private void fixAfterInsertion(Entry<K, V> var1) {
-        var1.color = false;
+    private void fixAfterInsertion(Entry<K, V> newEntry) {
+        newEntry.color = RED;
 
-        while(var1 != null && var1 != this.root && !var1.parent.color) {
-            Entry var2;
-            if(parentOf(var1) == leftOf(parentOf(parentOf(var1)))) {
-                var2 = rightOf(parentOf(parentOf(var1)));
-                if(!colorOf(var2)) {
-                    setColor(parentOf(var1), true);
-                    setColor(var2, true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    var1 = parentOf(parentOf(var1));
+        while(newEntry != null && newEntry != this.root && newEntry.parent.color == RED) {
+            Entry uncelEntry;
+            if(parentOf(newEntry) == leftOf(parentOf(parentOf(newEntry)))) {
+                uncelEntry = rightOf(parentOf(parentOf(newEntry)));
+                // uncel is red
+                if(!colorOf(uncelEntry)) {
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(uncelEntry, BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    newEntry = parentOf(parentOf(newEntry));
                 } else {
-                    if(var1 == rightOf(parentOf(var1))) {
-                        var1 = parentOf(var1);
-                        this.rotateLeft(var1);
+                    if(newEntry == rightOf(parentOf(newEntry))) {
+                        newEntry = parentOf(newEntry);
+                        this.rotateLeft(newEntry);
                     }
 
-                    setColor(parentOf(var1), true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    this.rotateRight(parentOf(parentOf(var1)));
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    this.rotateRight(parentOf(parentOf(newEntry)));
                 }
             } else {
-                var2 = leftOf(parentOf(parentOf(var1)));
-                if(!colorOf(var2)) {
-                    setColor(parentOf(var1), true);
-                    setColor(var2, true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    var1 = parentOf(parentOf(var1));
+                uncelEntry = leftOf(parentOf(parentOf(newEntry)));
+                if(!colorOf(uncelEntry)) {
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(uncelEntry, BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    newEntry = parentOf(parentOf(newEntry));
                 } else {
-                    if(var1 == leftOf(parentOf(var1))) {
-                        var1 = parentOf(var1);
-                        this.rotateRight(var1);
+                    if(newEntry == leftOf(parentOf(newEntry))) {
+                        newEntry = parentOf(newEntry);
+                        this.rotateRight(newEntry);
                     }
 
-                    setColor(parentOf(var1), true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    this.rotateLeft(parentOf(parentOf(var1)));
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    this.rotateLeft(parentOf(parentOf(newEntry)));
                 }
             }
         }

@@ -1,0 +1,26 @@
+38. Check parameters for validity
+	- 
+39. Make defensive copies when needed
+	- defensive copies are made before checking the
+	validity of the parameters (Item 38), and the validity check is performed on
+	the copies rather than on the originals.
+	- http://www.javaworld.com/article/2077424/learn-java/does-java-pass-by-reference-or-pass-by-value.html
+40. Design method signatures carefully
+	- Choose method names carefully.
+	- Don’t go overboard in providing convenience methods.
+	- Avoid long parameter lists.
+	- Long sequences of identically typed parameters are especially harmful.
+	- For parameter types, favor interfaces over classes.
+	- Prefer two-element enum types to boolean parameters.
+41. Use overloading judiciously
+	- the choice of which overloading to invoke is made at compile time
+	- selection among overloaded methods is static, while selection among 
+	overridden methods is dynamic.
+	- Therefore you should avoid confusing uses of overloading.
+	- A safe, conservative policy is never to export two overloadings with
+	the same number of parameters
+42. Use varargs judiciously
+	- 
+43. Return empty arrays or collections, not nulls
+	- there is no reason ever to return null from an array- or
+	collection-valued method instead of returning an empty array or collection

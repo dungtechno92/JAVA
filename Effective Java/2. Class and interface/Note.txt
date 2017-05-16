@@ -1,0 +1,53 @@
+13: 
+14: 
+15: Minimize mutability
+	To make a class immutable, follow these five rules:
+	1. Don't provide any methods that modify the object's state (known as mutators).
+	2. Ensure that the class can't be extended.
+	3. Make all fields final.
+	4. Make all fields private.
+	5. Ensure exclusive access to any mutable components.
+16: Favor composition over inheritance
+17: Design and document for inheritance or else prohibit it:
+	- The class must document its self-use of overridable methods.
+	- Aclass may have to provide hooks into its internal workings in the form of judiciously
+	chosen protected methods.
+	- The only way to test a class designed for inheritance is to write subclasses, you must
+	test your class by writing subclasses before you release it.
+	- Constructors must not invoke overridable methods.
+	- Neither clone nor readObject may invoke an overridable method, directly or
+	indirectly.
+	- The best solution to this problem is to prohibit subclassing in classes that
+	are not designed and documented to be safely subclassed.
+18: Prefer interfaces to abstract classes:
+    - Should use interface because 1 class can impliment multi interface.
+19: Use interfaces only to define types
+	- Interfaces should be used only to define types. They should not
+	be used to export constants.
+	- Why don't use interfaces to export constants ?
+20: Prefer class hierarchies to tagged classes
+	- When you encounter an existing class with a tag field, consider refactoring it into a hierarchy.
+21: Use function objects to represent strategies
+	- Function Pointer.
+	- function object: Thay vì trong 1 biến truyền vào 1 hàm là 1 con trỏ hàm. Ta sẽ truyền vào 1 object trong đó object đó có 1 phương thức để thực hiện 1 việc nào đó.
+	- a primary use of function pointers is to implement the Strategy
+	pattern. To implement this pattern in Java, declare an interface to represent the
+	strategy, and a class that implements this interface for each concrete strategy.
+	When a concrete strategy is used only once, it is typically declared and instantiated
+	as an anonymous class. When a concrete strategy is designed for repeated
+	use, it is generally implemented as a private static member class and exported in a
+	public static final field whose type is the strategy interface.
+22: Favor static member classes over nonstatic
+	- It is a way of logically grouping classes that are only used in one place.
+	- It increases encapsulation.
+	- Nested classes can lead to more readable and maintainable code.
+	- Child to parent class connection is simpler as it visually illustrates the variables and methods of each class.
+	- Use it if your requirements are similar to those of a local class, you want to make the type more widely available, 
+	and you don't require access to local variables or method parameters.
+	- Use a non-static nested class (or inner class) if you require access to an enclosing instance's non-public fields and methods. 
+	Use a static nested class if you don't require this access.
+	
+	- Static Nested Class: SNC can't access property of outer class. When use "private" for SNC, other class can't access SNC.
+	- Inner Class: Inner classes are also used to access the private members of a class. When use "private" for IC, other class can't access IC.
+	- Method-local Inner Class: 
+	- Anonymous Inner Class:
