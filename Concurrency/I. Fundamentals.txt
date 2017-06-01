@@ -1,0 +1,7 @@
+Process và Thread :
+- Process ch?a nhi?u Thread.
+- Các Thread trong 1 process thì dùng 1 không gian b? nh? nhu nhau còn các process thì dùng các không gian nh? khác nhau.
+1.Thread safety
+- A class is thread-safe if it behaves correctly when accessed from multiple
+threads. Thread-safe classes encapsulate any needed synchronization so that
+clients need not provide their own.Stateless objects are always thread-safe
