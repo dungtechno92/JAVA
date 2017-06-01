@@ -1,7 +1,5 @@
 package com.dungdv;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.ArrayList;
 
@@ -124,233 +122,95 @@ public class TreeMap<K, V> {
         return null;
     }
 
-    public V put(K var1, V var2) {
-        Entry var3 = this.root;
-        if(var3 == null) {
-            this.compare(var1, var1);
-            this.root = new Entry(var1, var2, (Entry)null);
+    public V put(K newKey, V newValue) {
+        Entry entryRoot = this.root;
+        // if tree is empty
+        if(entryRoot == null) {
+            this.compare(newKey, newKey);
+            this.root = new Entry(newKey, newValue, (Entry)null);
             this.size = 1;
             ++this.modCount;
             return null;
         } else {
-            Comparator var6 = this.comparator;
-            int var4;
-            Entry var5;
-            if(var6 != null) {
-                do {
-                    var5 = var3;
-                    var4 = var6.compare(var1, var3.key);
-                    if(var4 < 0) {
-                        var3 = var3.left;
-                    } else {
-                        if(var4 <= 0) {
-                            return (V) var3.setValue(var2);
-                        }
+            Comparator comparator = this.comparator;
+            int compareResult;
+            Entry parentEntry;
+            if(newKey == null) {
+                throw new NullPointerException();
+            }
 
-                        var3 = var3.right;
+            Comparable var7 = (Comparable)newKey;
+
+            // find parent for new entry
+            do {
+                parentEntry = entryRoot;
+                compareResult = var7.compareTo(entryRoot.key);
+                if(compareResult < 0) {
+                    entryRoot = entryRoot.left;
+                } else {
+                    // If key exiting in tree
+                    if(compareResult == 0) {
+                        return (V) entryRoot.setValue(newValue);
                     }
-                } while(var3 != null);
-            } else {
-                if(var1 == null) {
-                    throw new NullPointerException();
+
+                    entryRoot = entryRoot.right;
                 }
+            } while(entryRoot != null);
 
-                Comparable var7 = (Comparable)var1;
-
-                do {
-                    var5 = var3;
-                    var4 = var7.compareTo(var3.key);
-                    if(var4 < 0) {
-                        var3 = var3.left;
-                    } else {
-                        if(var4 <= 0) {
-                            return (V) var3.setValue(var2);
-                        }
-
-                        var3 = var3.right;
-                    }
-                } while(var3 != null);
-            }
-
-            Entry var8 = new Entry(var1, var2, var5);
-            if(var4 < 0) {
-                var5.left = var8;
+            // New entry to insert into Tree
+            Entry newEntry = new Entry(newKey, newValue, parentEntry);
+            if(compareResult < 0) {
+                parentEntry.left = newEntry;
             } else {
-                var5.right = var8;
+                parentEntry.right = newEntry;
             }
 
-            this.fixAfterInsertion(var8);
+            this.fixAfterInsertion(newEntry);
             ++this.size;
             ++this.modCount;
             return null;
         }
     }
 
-    private void deleteEntry(Entry<K,V> p) {
-        // If strictly internal, copy successor's element to p and then make p
-        // point to successor.
-        if (p.left != null && p.right != null) {
-            Entry<K,V> s = findReplament(p);
-            p.key = s.key;
-            p.value = s.value;
-            p = s;
-        } // p has 2 children
+    private void fixAfterInsertion(Entry<K, V> newEntry) {
+        newEntry.color = RED;
 
-        // Start fixup at replacement node, if it exists.
-        Entry<K,V> replacement = (p.left != null ? p.left : p.right);
-
-        if (replacement != null) {
-            // Link replacement to parent
-            replacement.parent = p.parent;
-            if (p.parent == null)
-                root = replacement;
-            else if (p == p.parent.left)
-                p.parent.left  = replacement;
-            else
-                p.parent.right = replacement;
-
-            // Null out links so they are OK to use by fixAfterDeletion.
-            p.left = p.right = p.parent = null;
-
-            // Fix replacement
-            if (p.color == BLACK)
-                fixAfterDeletion(replacement);
-        } else if (p.parent == null) { // return if we are the only node.
-            root = null;
-        } else { //  No children. Use self as phantom replacement and unlink.
-            if (p.color == BLACK)
-                fixAfterDeletion(p);
-
-            if (p.parent != null) {
-                if (p == p.parent.left)
-                    p.parent.left = null;
-                else if (p == p.parent.right)
-                    p.parent.right = null;
-                p.parent = null;
-            }
-        }
-    }
-
-    static <K,V> TreeMap.Entry<K,V> findReplament(Entry<K,V> t) {
-        if (t == null)
-            return null;
-        else if (t.right != null) {
-            Entry<K,V> p = t.right;
-            while (p.left != null)
-                p = p.left;
-            return p;
-        } else {
-            Entry<K,V> p = t.parent;
-            Entry<K,V> ch = t;
-            while (p != null && ch == p.right) {
-                ch = p;
-                p = p.parent;
-            }
-            return p;
-        }
-    }
-
-    private void fixAfterDeletion(Entry<K,V> x) {
-        while (x != root && colorOf(x) == BLACK) {
-            if (x == leftOf(parentOf(x))) {
-                Entry<K,V> sib = rightOf(parentOf(x));
-
-                if (colorOf(sib) == RED) {
-                    setColor(sib, BLACK);
-                    setColor(parentOf(x), RED);
-                    rotateLeft(parentOf(x));
-                    sib = rightOf(parentOf(x));
-                }
-
-                if (colorOf(leftOf(sib))  == BLACK &&
-                        colorOf(rightOf(sib)) == BLACK) {
-                    setColor(sib, RED);
-                    x = parentOf(x);
+        while(newEntry != null && newEntry != this.root && newEntry.parent.color == RED) {
+            Entry uncelEntry;
+            if(parentOf(newEntry) == leftOf(parentOf(parentOf(newEntry)))) {
+                uncelEntry = rightOf(parentOf(parentOf(newEntry)));
+                // uncel is red
+                if(!colorOf(uncelEntry)) {
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(uncelEntry, BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    newEntry = parentOf(parentOf(newEntry));
                 } else {
-                    if (colorOf(rightOf(sib)) == BLACK) {
-                        setColor(leftOf(sib), BLACK);
-                        setColor(sib, RED);
-                        rotateRight(sib);
-                        sib = rightOf(parentOf(x));
-                    }
-                    setColor(sib, colorOf(parentOf(x)));
-                    setColor(parentOf(x), BLACK);
-                    setColor(rightOf(sib), BLACK);
-                    rotateLeft(parentOf(x));
-                    x = root;
-                }
-            } else { // symmetric
-                Entry<K,V> sib = leftOf(parentOf(x));
-
-                if (colorOf(sib) == RED) {
-                    setColor(sib, BLACK);
-                    setColor(parentOf(x), RED);
-                    rotateRight(parentOf(x));
-                    sib = leftOf(parentOf(x));
-                }
-
-                if (colorOf(rightOf(sib)) == BLACK &&
-                        colorOf(leftOf(sib)) == BLACK) {
-                    setColor(sib, RED);
-                    x = parentOf(x);
-                } else {
-                    if (colorOf(leftOf(sib)) == BLACK) {
-                        setColor(rightOf(sib), BLACK);
-                        setColor(sib, RED);
-                        rotateLeft(sib);
-                        sib = leftOf(parentOf(x));
-                    }
-                    setColor(sib, colorOf(parentOf(x)));
-                    setColor(parentOf(x), BLACK);
-                    setColor(leftOf(sib), BLACK);
-                    rotateRight(parentOf(x));
-                    x = root;
-                }
-            }
-        }
-
-        setColor(x, BLACK);
-    }
-
-    private void fixAfterInsertion(Entry<K, V> var1) {
-        var1.color = RED;
-
-        while(var1 != null && var1 != this.root && var1.parent.color == RED) {
-            Entry<K,V> parent = parentOf(var1);
-            Entry<K,V> grandParent = parentOf(parent);
-            if(parent == leftOf(grandParent)) {
-                Entry<K,V> uncle = rightOf(grandParent);
-                if(colorOf(uncle) == RED) {
-                    parent.color = BLACK;
-                    uncle.color = BLACK;
-                    var1 = grandParent;
-                    var1.color = RED;
-                } else {
-                    if(var1 == rightOf(parent)) {
-                        rotateLeft(parent);
-                        parent = var1;
+                    if(newEntry == rightOf(parentOf(newEntry))) {
+                        newEntry = parentOf(newEntry);
+                        this.rotateLeft(newEntry);
                     }
 
-                    parent.color = BLACK;
-                    grandParent.color = RED;
-                    rotateRight(grandParent);
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    this.rotateRight(parentOf(parentOf(newEntry)));
                 }
             } else {
-                Entry<K,V> uncle = leftOf(grandParent);
-                if(colorOf(uncle) == RED) {
-                    parent.color = BLACK;
-                    uncle.color = BLACK;
-                    var1 = grandParent;
-                    var1.color = RED;
+                uncelEntry = leftOf(parentOf(parentOf(newEntry)));
+                if(!colorOf(uncelEntry)) {
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(uncelEntry, BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    newEntry = parentOf(parentOf(newEntry));
                 } else {
-                    if(var1 == leftOf(parent)) {
-                        rotateRight(parent);
-                        parent = var1;
+                    if(newEntry == leftOf(parentOf(newEntry))) {
+                        newEntry = parentOf(newEntry);
+                        this.rotateRight(newEntry);
                     }
 
-                    parent.color = BLACK;
-                    grandParent.color = RED;
-                    rotateLeft(grandParent);
+                    setColor(parentOf(newEntry), BLACK);
+                    setColor(parentOf(parentOf(newEntry)), RED);
+                    this.rotateLeft(parentOf(parentOf(newEntry)));
                 }
             }
         }
