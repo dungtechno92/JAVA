@@ -3,6 +3,7 @@ package com.dungdv;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created by DungDV on 4/22/2017.
@@ -185,44 +186,171 @@ public class TreeMap<K, V> {
         }
     }
 
-    private void fixAfterInsertion(Entry<K, V> var1) {
-        var1.color = false;
+    private void deleteEntry(Entry<K,V> p) {
+        // If strictly internal, copy successor's element to p and then make p
+        // point to successor.
+        if (p.left != null && p.right != null) {
+            Entry<K,V> s = findReplament(p);
+            p.key = s.key;
+            p.value = s.value;
+            p = s;
+        } // p has 2 children
 
-        while(var1 != null && var1 != this.root && !var1.parent.color) {
-            Entry var2;
-            if(parentOf(var1) == leftOf(parentOf(parentOf(var1)))) {
-                var2 = rightOf(parentOf(parentOf(var1)));
-                if(!colorOf(var2)) {
-                    setColor(parentOf(var1), true);
-                    setColor(var2, true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    var1 = parentOf(parentOf(var1));
+        // Start fixup at replacement node, if it exists.
+        Entry<K,V> replacement = (p.left != null ? p.left : p.right);
+
+        if (replacement != null) {
+            // Link replacement to parent
+            replacement.parent = p.parent;
+            if (p.parent == null)
+                root = replacement;
+            else if (p == p.parent.left)
+                p.parent.left  = replacement;
+            else
+                p.parent.right = replacement;
+
+            // Null out links so they are OK to use by fixAfterDeletion.
+            p.left = p.right = p.parent = null;
+
+            // Fix replacement
+            if (p.color == BLACK)
+                fixAfterDeletion(replacement);
+        } else if (p.parent == null) { // return if we are the only node.
+            root = null;
+        } else { //  No children. Use self as phantom replacement and unlink.
+            if (p.color == BLACK)
+                fixAfterDeletion(p);
+
+            if (p.parent != null) {
+                if (p == p.parent.left)
+                    p.parent.left = null;
+                else if (p == p.parent.right)
+                    p.parent.right = null;
+                p.parent = null;
+            }
+        }
+    }
+
+    static <K,V> TreeMap.Entry<K,V> findReplament(Entry<K,V> t) {
+        if (t == null)
+            return null;
+        else if (t.right != null) {
+            Entry<K,V> p = t.right;
+            while (p.left != null)
+                p = p.left;
+            return p;
+        } else {
+            Entry<K,V> p = t.parent;
+            Entry<K,V> ch = t;
+            while (p != null && ch == p.right) {
+                ch = p;
+                p = p.parent;
+            }
+            return p;
+        }
+    }
+
+    private void fixAfterDeletion(Entry<K,V> x) {
+        while (x != root && colorOf(x) == BLACK) {
+            if (x == leftOf(parentOf(x))) {
+                Entry<K,V> sib = rightOf(parentOf(x));
+
+                if (colorOf(sib) == RED) {
+                    setColor(sib, BLACK);
+                    setColor(parentOf(x), RED);
+                    rotateLeft(parentOf(x));
+                    sib = rightOf(parentOf(x));
+                }
+
+                if (colorOf(leftOf(sib))  == BLACK &&
+                        colorOf(rightOf(sib)) == BLACK) {
+                    setColor(sib, RED);
+                    x = parentOf(x);
                 } else {
-                    if(var1 == rightOf(parentOf(var1))) {
-                        var1 = parentOf(var1);
-                        this.rotateLeft(var1);
+                    if (colorOf(rightOf(sib)) == BLACK) {
+                        setColor(leftOf(sib), BLACK);
+                        setColor(sib, RED);
+                        rotateRight(sib);
+                        sib = rightOf(parentOf(x));
+                    }
+                    setColor(sib, colorOf(parentOf(x)));
+                    setColor(parentOf(x), BLACK);
+                    setColor(rightOf(sib), BLACK);
+                    rotateLeft(parentOf(x));
+                    x = root;
+                }
+            } else { // symmetric
+                Entry<K,V> sib = leftOf(parentOf(x));
+
+                if (colorOf(sib) == RED) {
+                    setColor(sib, BLACK);
+                    setColor(parentOf(x), RED);
+                    rotateRight(parentOf(x));
+                    sib = leftOf(parentOf(x));
+                }
+
+                if (colorOf(rightOf(sib)) == BLACK &&
+                        colorOf(leftOf(sib)) == BLACK) {
+                    setColor(sib, RED);
+                    x = parentOf(x);
+                } else {
+                    if (colorOf(leftOf(sib)) == BLACK) {
+                        setColor(rightOf(sib), BLACK);
+                        setColor(sib, RED);
+                        rotateLeft(sib);
+                        sib = leftOf(parentOf(x));
+                    }
+                    setColor(sib, colorOf(parentOf(x)));
+                    setColor(parentOf(x), BLACK);
+                    setColor(leftOf(sib), BLACK);
+                    rotateRight(parentOf(x));
+                    x = root;
+                }
+            }
+        }
+
+        setColor(x, BLACK);
+    }
+
+    private void fixAfterInsertion(Entry<K, V> var1) {
+        var1.color = RED;
+
+        while(var1 != null && var1 != this.root && var1.parent.color == RED) {
+            Entry<K,V> parent = parentOf(var1);
+            Entry<K,V> grandParent = parentOf(parent);
+            if(parent == leftOf(grandParent)) {
+                Entry<K,V> uncle = rightOf(grandParent);
+                if(colorOf(uncle) == RED) {
+                    parent.color = BLACK;
+                    uncle.color = BLACK;
+                    var1 = grandParent;
+                    var1.color = RED;
+                } else {
+                    if(var1 == rightOf(parent)) {
+                        rotateLeft(parent);
+                        parent = var1;
                     }
 
-                    setColor(parentOf(var1), true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    this.rotateRight(parentOf(parentOf(var1)));
+                    parent.color = BLACK;
+                    grandParent.color = RED;
+                    rotateRight(grandParent);
                 }
             } else {
-                var2 = leftOf(parentOf(parentOf(var1)));
-                if(!colorOf(var2)) {
-                    setColor(parentOf(var1), true);
-                    setColor(var2, true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    var1 = parentOf(parentOf(var1));
+                Entry<K,V> uncle = leftOf(grandParent);
+                if(colorOf(uncle) == RED) {
+                    parent.color = BLACK;
+                    uncle.color = BLACK;
+                    var1 = grandParent;
+                    var1.color = RED;
                 } else {
-                    if(var1 == leftOf(parentOf(var1))) {
-                        var1 = parentOf(var1);
-                        this.rotateRight(var1);
+                    if(var1 == leftOf(parent)) {
+                        rotateRight(parent);
+                        parent = var1;
                     }
 
-                    setColor(parentOf(var1), true);
-                    setColor(parentOf(parentOf(var1)), false);
-                    this.rotateLeft(parentOf(parentOf(var1)));
+                    parent.color = BLACK;
+                    grandParent.color = RED;
+                    rotateLeft(grandParent);
                 }
             }
         }
@@ -311,14 +439,54 @@ public class TreeMap<K, V> {
         return p;
     }
 
-    public static void main(String[] args) {
-        TreeMap<String, String> treeMap = new TreeMap<String, String>();
-        treeMap.put("key4", "value4");
-        treeMap.put("key2", "value2");
-        treeMap.put("key1", "value1");
-        treeMap.put("key3", "value3");
-        treeMap.put("key5", "value5");
+    public Entry<K, V> getRoot() {
+        return root;
+    }
 
-        System.out.print("==========" + treeMap.getFirstEntry().getValue());
+    public void printTree(Entry<K, V> root) {
+        List<Entry<K, V>> nodes = new ArrayList<>();
+        nodes.add(root);
+        int level = 0;
+        while(nodes.size() > 0) {
+            List<Entry<K, V>> nodeTemps = new ArrayList<>();
+            System.out.println("level" + level);
+            for (Entry<K, V> node : nodes) {
+                StringBuilder text = new StringBuilder("==========" + node.getKey());
+                if(parentOf(node) != null) {
+                    text.append("=" + parentOf(node).getKey());
+                } else {
+                    text.append("=" + null);
+                }
+                text.append("=" + node.color);
+                System.out.println(text.toString());
+                if (node.left != null) {
+                    nodeTemps.add(node.left);
+                }
+                if (node.right != null) {
+                    nodeTemps.add(node.right);
+                }
+            }
+            nodes = nodeTemps;
+            level ++;
+        }
+    }
+
+    public static void main(String[] args) {
+        TreeMap<Integer, Integer> treeMap = new TreeMap<Integer, Integer>();
+        treeMap.put(10, 10);
+        treeMap.put(2, 2);
+        treeMap.put(4, 4);
+        treeMap.put(12, 12);
+        treeMap.put(6, 6);
+        treeMap.put(3, 3);
+        treeMap.put(1, 1);
+        treeMap.put(7, 7);
+        treeMap.put(13, 13);
+        treeMap.put(8, 8);
+        treeMap.put(9, 9);
+        treeMap.put(5, 5);
+        treeMap.put(11, 11);
+
+        treeMap.printTree(treeMap.getRoot());
     }
 }
