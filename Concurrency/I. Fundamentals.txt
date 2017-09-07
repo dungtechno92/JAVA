@@ -1,7 +1,41 @@
 Process và Thread :
 - Process ch?a nhi?u Thread.
 - Các Thread trong 1 process thì dùng 1 không gian b? nh? nhu nhau còn các process thì dùng các không gian nh? khác nhau.
+States of thread :
+- NEW, RUNABLE, BLOCKED, WAITING, TIME-WAITING, TERMINAL.
 1.Thread safety
 - A class is thread-safe if it behaves correctly when accessed from multiple
 threads. Thread-safe classes encapsulate any needed synchronization so that
 clients need not provide their own.Stateless objects are always thread-safe
+- Why don't allaway use synchronized method ?
+- poor concurrency: the number of simultaneous invocations is limited not by the availability of processing resources,
+but by the structure of the application itself
+- the synchronized blocks are “short enough”. big or small to make synchronized blocks may require tradeoffs : safety (which must not be compromised), simplicity, and performance.
+- There is frequently a tension between simplicity and performance. When implementing a synchronization policy, resist the temptation to prematurely
+sacrifice simplicity (potentially compromising safety) for the sake of performance.
+- Avoid holding locks during lengthy computations or operations at risk of not completing quickly such as network or console I/O.
+2. Sharing Objects
+- In the absence of synchronization, the compiler, processor, and runtime can do some downright weird things to the order in which operations appear
+to execute. Attempts to reason about the order in which memory actions “must” happen in insufficiently synchronized multithreaded programs will almost certainly be incorrect.
+- Locking is not just about mutual exclusion; it is also about memory visibility.To ensure that all threads see the most up-to-date values of shared
+mutable variables, the reading and writing threads must synchronize on a common lock.
+- Do not allow the this reference to escape during construction.
+- confinement
+
+
+3.Conposing object 
+
+- Java monitor pattern
+- If a class is composed of multiple independent thread-safe state variables
+and has no operations that have any invalid state transitions, then it can
+delegate thread safety to the underlying state variables.
+
+4. Building blocks
+Synchronizers: 
+	- Latch: if you want to start main processing thread once its dependency thread is completed.
+	- FutureTask: main thread will continue once FutureTask finished. FutureTask conveys the result from the thread executing the computation to the
+	thread(s) retrieving the result; the specification of FutureTask guarantees that this transfer constitutes a safe publication of the result.
+	- Semaphores: semaphores has a set of virtual permits. Thread can acquire permit (as long as some remain) and release permit when finished.
+	- Barriers: we have n thread and each thread have k step. Barriers make sure step j of all thread have completed before all thread moving on to j + 1 step.
+Building an effcient, scalcable result cache:
+	- Use ConcurrentHashMap<A, Future<V>>();
