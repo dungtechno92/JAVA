@@ -1,0 +1,28 @@
+- In what thread will tasks be executed? 
+- In what order should tasks be executed (FIFO, LIFO, priority order)?
+- How many tasks may execute concurrently?
+- How many tasks may be queued pending execution?
+- If a task has to be rejected because the system is overloaded, which task should be selected as the victim, and how should the application be notified?
+- What actions should be taken before or after executing a task?
+
+7. 
+Interrupt :
+	- Calling interrupt does not necessarily stop the target thread from doing
+	what it is doing; it merely delivers the message that interruption has been
+	requested.
+	- Interruption is usually the most sensible way to implement cancellation.
+Interruption policies
+	- Because each thread has its own interruption policy, you should not interrupt a thread unless you know what interruption means to that thread.
+PROCESSING...
+
+8.Applying Thread Pools:
+- Implicit couplings between tasks and execution policies
+	+ Some tasks have Characteristics that require or preclude a specific execution policy.
+	+ Thread starvation deadlock: the tasks wait result of each other task or stask A wait result of task B but task B still on the work queue.
+	+ Long-running task should be bounded by time.
+- Sizing thread pools
+	+ ThreadPoolExecutor vs ExecutorService
+
+- Configuring ThreadPoolExecutor
+	+ The newCachedThreadPool factory is a good default choice for an Executor.
+- 

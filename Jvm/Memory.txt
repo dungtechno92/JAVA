@@ -1,0 +1,13 @@
+- Heap: save all object in java app.
+- Stack: Each thread running in JVM has its own thread stack. 
+The thread stack contains information about what methods the thread has called to reach the current point of execution. It also contains all local variables for each method being executed.
+
+- The Java heap and garbage collection:
+
+	+ all heap memory must be reserved up front.
+- Classes and classloaders
+	+ Permgen(permanent generation) heap area to stored that define object structure and method logic( Config: -XX: MaxPermSize).Size of permgen is fixed while JVM's running.
+	  When GC cant garbage collection class and Classloader is still loading new class, we will encouter " java.lang.OutOfMemoryError: PermGen space" although Heap is not full.
+	+ JNI
+	+ NIO 
+
