@@ -27,4 +27,4 @@
     
   + Do not use wildcard types as return types!
   + If a user of a class has to think about wildcard types, there is probably something wrong with the class’ API.
-  + All comparables and comparators are consumers!
+  + Remember the basic rule: producer-extends, consumer-super (PECS). All comparables and comparators are consumers!
