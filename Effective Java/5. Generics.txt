@@ -1,0 +1,30 @@
+- Prefer List to Arrays: 
+  + Arrays are covariants: If A is subtype of B, then A[] is a subtype of B[]. Generics are invariants: List<A> is not a subtype of List<B>.
+  + Arrays provide runtime safety but not compile time.
+  + Example: 
+      // Fails on runtime, but compiles!
+      Object[] objectArray = new Long[1];
+      objectArray[0] = "a string";
+
+      // Won't compile
+      List<Object> o1 = new ArrayList<Long>();
+      o1.add("a string");
+- Use bounded wildcards to increase API flexibility: 
+  + Consider
+
+    public List<Number> test(List<Number> il ) {
+            ...
+    }
+    calling the method with test(new ArrayList<Integer>()) will give compilation error because List<Integer> is considered a a completely different type than List<Number>
+    . Changing the signature to use bounded wildcards will fix this:
+        public List<Number> test(List<? extends Number> il )
+    Note however that this is perfectly valid:
+        new ArrayList<Number>().add(Integer.valueOf(1)); // boxing is used only for example. 
+    
+  + When to use extend and when to use super? Mnemonic for remembering bounded wildcard: PECS - producer-extends, consumer-super
+      For example for a stack method pushAll(srcCollection) the parameter srcCollection produces elements that are used by the stack, hence the method parameter should use <? extends T>.
+      On the other hand, a stack method popAll(destCollection) the parameter destCollection consumes elements in the stack, hence the method parameter should use <? super T>.
+    
+  + Do not use wildcard types as return types!
+  + If a user of a class has to think about wildcard types, there is probably something wrong with the class’ API.
+  + All comparables and comparators are consumers!
