@@ -1,0 +1,13 @@
+1. Biến static:
+  - Thuộc về class chứ không thuộc về từng Object cụ thể của class đó. Các object của 1 class chia sẻ bản copy của biến static.
+2. Method static:
+  - Thuộc về class chứ không thuộc về 1 object cụ thể. Trong static method, chúng ta chỉ có thể gọi đến static method hoặc statics
+  variable.
+  - Không thể dùng "super", "this" cho static method.
+  - Không override được phương thức static.
+3. Block static:
+  - Được chạy khi class được nạp vào JVM.
+4. Class static:
+  - .
+  
+  Reference: http://www.javainterviewpoint.com/use-of-static-keyword-in-java/.
