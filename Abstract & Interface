@@ -1,0 +1,16 @@
+1. Abstract class, mmethod:
+  - Không thể tạo được thể hiện.
+  - Subclass của nó phải implement tất cả các abstract method của nó nếu không subclass cũng phải là abstract.
+  - Chỉ có abstract class, interface mới chứa được các abstrac method. Abstract cho các method của interface là không cần thiết.
+  - Abstract class có thể có static fields và static method.
+  * Trường hợp sử dụng:
+    + Khi muốn chia sẻ code giữ các class liên quan.
+    + Khi muốn class extend phải có một số hàm, thuộc tính nhất định hay muốn access modify của thuộc tính bắt buộc không phải là public.
+  * Trường hợp abstract class implement interface:
+    + Khi subclass của interface không muốn implement toàn bộ cái method của interface đó.
+2. Interface:
+  - 
+3. So sánh:
+
+  - 
+  
