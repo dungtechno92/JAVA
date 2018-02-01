@@ -1,4 +1,5 @@
 # Big number:
+### Cách biểu diễn số lớn trong BigInteger và BigDecimal.
 # Array:
 ### Java array in memory:
 #### Mảng 1 chiều biểu diễn trong bộ nhớ như thế nào? Tại sao phải specify số phần tử của mảng?
