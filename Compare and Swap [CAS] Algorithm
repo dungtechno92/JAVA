@@ -4,3 +4,13 @@
   - Pessimistic: The optimistic approach is like the old saying, “It is easier to obtain forgiveness than permission”, where “easier” here
   means “more efficient”. Công nghệ này dựa vào việc phát hiện va chạm khi thao tác update được can thiệp bởi nhiều bên.
 2. Compare and Swap Algorithm:
+  - Các tham số của thuật toán:
+    + V: địa chỉ vùng nhớ nơi mà giá trị phải được update.
+    + A: Giá trị cũ đã đọc lần mới nhất từ V.
+    + B: Giá trị mới cần được update.
+  - Các bước thực hiện của thuật toán:
+    if A = V
+        V = B
+    else
+        operation failed
+    return V
