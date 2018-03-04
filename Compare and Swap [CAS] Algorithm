@@ -1,0 +1,6 @@
+1. Optimistic and Pessimistic Locking:
+  - Optimistic: It’s much like saying “please close the door first; otherwise some other crook will come in and rearrange your stuff”. Giống
+  như việc dùng từ khóa syschronized. An toàn nhưng ảnh hưởng đến hiệu năng.
+  - Pessimistic: The optimistic approach is like the old saying, “It is easier to obtain forgiveness than permission”, where “easier” here
+  means “more efficient”. Công nghệ này dựa vào việc phát hiện va chạm khi thao tác update được can thiệp bởi nhiều bên.
+2. Compare and Swap Algorithm:
