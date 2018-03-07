@@ -1,0 +1,10 @@
+1. Strong references:
+  - Là references đến object. Khi vẫn còn ít nhất 1 strong references đến object thì GC sẽ không dọn dẹp object đó.
+2. Weak References:
+  - Là references đến object nhưng refereces này không ngăn cản GC dọn dẹp object đó trong GC cycle tiếp theo.
+3. Sort references:
+  - Giống như weak references nhưng chỉ khác là object sẽ vẫn còn trong bộ nhớ đến khi nào bộ nhớ vẫn còn đủ để chứa nó.
+4. Phantom references:
+  - Chưa tìm hiểu kỹ.
+WeakHashMap sử dụng weak references.
+* Reference: https://community.oracle.com/blogs/enicholas/2006/05/04/understanding-weak-references
